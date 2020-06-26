@@ -2,45 +2,89 @@
   <div class="hello">
     <h1>{{ msg }}</h1>
     <p>
-      For a guide and recipes on how to configure / customize this project,<br>
-      check out the
-      <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
+      Zoom in to see the relationships between different questions
     </p>
-    <h3>Installed CLI Plugins</h3>
-    <ul>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel" target="_blank" rel="noopener">babel</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-eslint" target="_blank" rel="noopener">eslint</a></li>
-    </ul>
-    <h3>Essential Links</h3>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank" rel="noopener">Forum</a></li>
-      <li><a href="https://chat.vuejs.org" target="_blank" rel="noopener">Community Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank" rel="noopener">Twitter</a></li>
-      <li><a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a></li>
-    </ul>
-    <h3>Ecosystem</h3>
-    <ul>
-      <li><a href="https://router.vuejs.org" target="_blank" rel="noopener">vue-router</a></li>
-      <li><a href="https://vuex.vuejs.org" target="_blank" rel="noopener">vuex</a></li>
-      <li><a href="https://github.com/vuejs/vue-devtools#vue-devtools" target="_blank" rel="noopener">vue-devtools</a></li>
-      <li><a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">awesome-vue</a></li>
-    </ul>
+    <Network class="network" ref="network"
+    :nodes="nodes"
+    :edges="edges"
+    :options="options">
+    </Network>
   </div>
 </template>
 
 <script>
+import { Network } from "vue-vis-network";
+import edges from '../edges.json'
+import nodes from '../nodes.json'
 export default {
   name: 'HelloWorld',
+  components: {
+  Network
+  },
   props: {
     msg: String
+  },
+    data: function (){
+    return {
+      options: {
+        nodes: {
+          shape: "dot",
+          scaling: {
+            min: 10,
+            max: 30
+          },
+          font: {
+            size: 12,
+            face: "Tahoma",
+            color:'#fff'
+          }
+        },
+        edges: {
+          width: 0.15,
+          color: { inherit: "from" },
+          smooth: {
+            type: "continuous"
+          }
+        },
+        physics: {
+          stabilization: false,
+          barnesHut: {
+            gravitationalConstant: -80000,
+            springConstant: 0.001,
+            springLength: 200
+          }
+        },
+        interaction: {
+          tooltipDelay: 200,
+          hideEdgesOnDrag: true
+        }
   }
+    }
+  },
+  computed:{
+    nodes(){
+      return nodes
+    },
+    edges(){
+      return edges.map(function (edge){
+        edge.title = edge.strength
+        edge.physics = edge.strength >0.8
+        edge.hidden = edge.strength <0.8
+
+        return edge
+      })
+    }
+  }
+  
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.network{
+  height: 90vh;
+  background:#2e2e2e;  
+}
 h3 {
   margin: 40px 0 0;
 }
