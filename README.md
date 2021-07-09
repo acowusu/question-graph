@@ -1,4 +1,7 @@
-# graph-site
+# graph-site 
+shows a graph of the semantic similarity of questions.
+These similarity values were created using a neural network that was based on the MaLSTM architecture
+https://question-graph.vercel.app/
 
 ## Project setup
 ```
